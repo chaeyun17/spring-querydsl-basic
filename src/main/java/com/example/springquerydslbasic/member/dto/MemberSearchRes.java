@@ -9,10 +9,10 @@ import java.time.LocalDateTime;
 @Data @NoArgsConstructor @AllArgsConstructor
 public class MemberSearchRes {
 
-  private Long memberId;
-  private String memberName;
-  private Integer memberAge;
-  private LocalDateTime memberCreatedAt;
+  private Long id;
+  private String name;
+  private Integer age;
+  private LocalDateTime createdAt;
   private Long teamId;
   private String teamName;
 

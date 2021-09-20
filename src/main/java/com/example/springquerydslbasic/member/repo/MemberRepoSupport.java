@@ -17,6 +17,7 @@ import org.springframework.data.support.PageableExecutionUtils;
 import org.springframework.stereotype.Repository;
 import org.springframework.util.StringUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import static com.example.springquerydslbasic.member.entity.QMember.member;
@@ -92,6 +93,21 @@ public class MemberRepoSupport extends Querydsl4RepositorySupport {
 
   public Page<MemberSearchRes> searchV2(SearchReq searchReq) {
 
+    List<BooleanExpression> booleanExpressions = new ArrayList<>();
+
+    for(SearchCondition condition : searchReq.getConditions()){
+      if(condition.getName().equals("teamId")){
+        booleanExpressions.add(QueryDslUtils.getBooleanExpression(QTeam.team,
+          "id", condition.getOperation(), condition.getValue()));
+      }else if(condition.getName().equals("teamName")) {
+        booleanExpressions.add(QueryDslUtils.getBooleanExpression(QTeam.team,
+          "name", condition.getOperation(), condition.getValue()));
+      }else{
+        booleanExpressions.add(QueryDslUtils.getBooleanExpression(member,
+          condition.getName(), condition.getOperation(), condition.getValue()));
+      }
+    }
+
     return applyPagination(searchReq.getPageable(), (contentQuery)->
       contentQuery
       .from(member)
@@ -102,7 +118,9 @@ public class MemberRepoSupport extends Querydsl4RepositorySupport {
         member.createdAt,
         member.team.id,
         member.team.name
-    )));
+      ))
+      .where(booleanExpressions.toArray(new BooleanExpression[0]))
+    );
 
   }
 }
