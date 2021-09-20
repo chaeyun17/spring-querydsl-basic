@@ -1,0 +1,86 @@
+{
+	"info": {
+		"_postman_id": "742a70b4-ba85-4946-a668-85d68661b12c",
+		"name": "QueryDSLBasic",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "member-search",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/member/search?search=name~a,age>21&size=10&page=0&sort=age,asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"member",
+						"search"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "name~a,age>21"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "sort",
+							"value": "age,asc"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "member-search-v2",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "http://localhost:8080/v2/member/search?search=name~a,age>0,teamId:2&size=10&page=0&sort=age,asc",
+					"protocol": "http",
+					"host": [
+						"localhost"
+					],
+					"port": "8080",
+					"path": [
+						"v2",
+						"member",
+						"search"
+					],
+					"query": [
+						{
+							"key": "search",
+							"value": "name~a,age>0,teamId:2"
+						},
+						{
+							"key": "size",
+							"value": "10"
+						},
+						{
+							"key": "page",
+							"value": "0"
+						},
+						{
+							"key": "sort",
+							"value": "age,asc"
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	]
+}

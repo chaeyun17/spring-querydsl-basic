@@ -27,8 +27,16 @@ public class MemberController {
   }
 
   @GetMapping("/v2/member/search")
-  public Page<MemberSearchRes> searchV2(@RequestParam String search, @PageableDefault Pageable pageable){
+  public Page<MemberSearchRes> searchV2(@RequestParam String search,
+                                        @PageableDefault Pageable pageable){
     SearchReq searchReq = SearchParamToReqConverter.convert(search, pageable);
     return memberRepoSupport.searchV2(searchReq);
+  }
+
+  @GetMapping("/v2/member/search-join")
+  public Page<MemberSearchRes> searchJoin(@RequestParam(required = false) String search,
+                                          @PageableDefault Pageable pageable){
+    SearchReq searchReq = SearchParamToReqConverter.convert(search, pageable);
+    return memberRepoSupport.searchJoinWithPage(searchReq);
   }
 }

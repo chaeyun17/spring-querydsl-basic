@@ -1,5 +1,9 @@
 package com.example.springquerydslbasic;
 
+import com.example.springquerydslbasic.city.entity.City;
+import com.example.springquerydslbasic.city.repo.CityRepo;
+import com.example.springquerydslbasic.company.entity.Company;
+import com.example.springquerydslbasic.company.repo.CompanyRepo;
 import com.example.springquerydslbasic.member.entity.Member;
 import com.example.springquerydslbasic.member.repo.MemberRepo;
 import com.example.springquerydslbasic.team.entity.Team;
@@ -21,11 +25,28 @@ public class Migration {
   @Autowired
   private TeamRepo teamRepo;
 
+  @Autowired
+  private CityRepo cityRepo;
+
+  @Autowired
+  private CompanyRepo companyRepo;
+
   @PostConstruct
   @Transactional
   public void init() throws Exception {
-    Team t1 = new Team(1L, "t1");
-    Team t2 = new Team(2L, "t2");
+    City city1 = new City(1L, "city1");
+    City city2 = new City(2L, "city2");
+    cityRepo.save(city1);
+    cityRepo.save(city2);
+
+    Company c1 = new Company(1L, "comp1", city1);
+    Company c2 = new Company(2L, "comp1", city2);
+
+    companyRepo.save(c1);
+    companyRepo.save(c2);
+
+    Team t1 = new Team(1L, "t1", c1);
+    Team t2 = new Team(2L, "t2", c2);
     teamRepo.save(t1);
     teamRepo.save(t2);
 

@@ -1,5 +1,6 @@
 package com.example.springquerydslbasic.team.entity;
 
+import com.example.springquerydslbasic.company.entity.Company;
 import com.example.springquerydslbasic.member.entity.Member;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -18,5 +19,9 @@ public class Team {
   private Long id;
 
   private String name;
+
+  @ManyToOne
+  @JoinColumn(name = "company_id")
+  private Company company;
 
 }

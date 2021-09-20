@@ -15,5 +15,9 @@ public class MemberSearchRes {
   private LocalDateTime createdAt;
   private Long teamId;
   private String teamName;
+  private Long companyId;
+  private String companyName;
+  private Long cityId;
+  private String cityName;
 
 }

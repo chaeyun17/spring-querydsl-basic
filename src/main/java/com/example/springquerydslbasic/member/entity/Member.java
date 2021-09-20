@@ -1,6 +1,7 @@
 package com.example.springquerydslbasic.member.entity;
 
 import com.example.springquerydslbasic.team.entity.Team;
+import com.querydsl.core.annotations.QueryInit;
 import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -25,6 +26,7 @@ public class Member {
 
   @ManyToOne
   @JoinColumn(name = "team_id")
+  @QueryInit("*.*")
   private Team team;
 
   @Column(name = "created_at")

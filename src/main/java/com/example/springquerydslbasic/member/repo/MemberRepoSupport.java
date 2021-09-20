@@ -9,6 +9,7 @@ import com.example.springquerydslbasic.member.dto.MemberSearchRes;
 import com.example.springquerydslbasic.member.entity.Member;
 import com.example.springquerydslbasic.team.entity.QTeam;
 import com.querydsl.core.types.Projections;
+import com.querydsl.core.types.QBean;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.data.domain.Page;
@@ -59,16 +60,31 @@ public class MemberRepoSupport extends Querydsl4RepositorySupport {
     return PageableExecutionUtils.getPage(content, pageable, query::fetchCount);
   }
 
-  public Page<Member> searchJoinWithPage(SearchReq searchReq){
-    JPAQuery<Member> query = selectFrom(member);
-    for(SearchCondition condition : searchReq.getConditions()){
-      if(condition.getName().equals("member.team.name")){
-        query.where(QueryDslUtils.getBooleanExpression(member.team, "name", condition.getOperation(), condition.getValue()));
-      }
-    }
-    Pageable pageable = searchReq.getPageable();
-    List<Member> content = getQuerydsl().applyPagination(pageable, query).fetch();
-    return PageableExecutionUtils.getPage(content, pageable, query::fetchCount);
+  public Page<MemberSearchRes> searchJoinWithPage(SearchReq searchReq){
+    QBean<?> bean = Projections.fields(MemberSearchRes.class,
+      member.id.as("id"),
+      member.name.as("name"),
+      member.age.as("age"),
+      member.createdAt.as("createdAt"),
+      member.team.id.as("teamId"),
+      member.team.name.as("teamName"),
+      member.team.company.id.as("companyId"),
+      member.team.company.name.as("companyName"),
+      member.team.company.city.id.as("cityId"),
+      member.team.company.city.name.as("cityName")
+    );
+
+//    JPAQuery<Member> query = selectFrom(member);
+//    for(SearchCondition condition : searchReq.getConditions()){
+//      if(condition.getName().equals("member.team.name")){
+//        query.where(QueryDslUtils.getBooleanExpression(member.team, "name", condition.getOperation(), condition.getValue()));
+//      }
+//    }
+    return applyPagination(searchReq.getPageable(), queryFactory ->
+      queryFactory.select(bean)
+        .from(member)
+
+    );
   }
 
   private BooleanExpression[] getBooleanExpressions(List<SearchCondition> conditions){
