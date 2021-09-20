@@ -56,6 +56,18 @@ public class MemberRepoSupport extends Querydsl4RepositorySupport {
     return PageableExecutionUtils.getPage(content, pageable, query::fetchCount);
   }
 
+  public Page<Member> searchJoinWithPage(SearchReq searchReq){
+    JPAQuery<Member> query = selectFrom(member);
+    for(SearchCondition condition : searchReq.getConditions()){
+      if(condition.getName().equals("member.team.name")){
+        query.where(QueryDslUtils.getBooleanExpression(member.team, "name", condition.getOperation(), condition.getValue()));
+      }
+    }
+    Pageable pageable = searchReq.getPageable();
+    List<Member> content = getQuerydsl().applyPagination(pageable, query).fetch();
+    return PageableExecutionUtils.getPage(content, pageable, query::fetchCount);
+  }
+
   private BooleanExpression[] getBooleanExpressions(List<SearchCondition> conditions){
     return conditions.stream()
       .map(c-> QueryDslUtils.getBooleanExpression(member,
@@ -63,34 +75,6 @@ public class MemberRepoSupport extends Querydsl4RepositorySupport {
       .toArray(BooleanExpression[]::new);
   }
 
-  private BooleanExpression getBooleanExpression(SearchCondition condition) {
-    if(condition.isOpContains()) {
-    }else if(condition.isOpEq()){
-      if(condition.getName().equals("name")){
-        String value = condition.getValueByString();
-        return member.name.eq(value);
-      }else if (condition.getName().equals("age")){
-        int value = condition.getValueByInteger();
-        return member.age.eq(value);
-      }else if(condition.getName().equals("id")){
-        long value = condition.getValueByLong();
-        return member.id.eq(value);
-      }
-    }else if(condition.isOpGreaterThan()){
-      if(condition.getName().equals("age")){
-        return member.age.gt(condition.getValueByInteger());
-      }else if(condition.getName().equals("id")){
-        return member.id.gt(condition.getValueByLong());
-      }
-    }else if(condition.isOpLowerThan()){
-      if(condition.getName().equals("age")){
-        return member.age.lt(condition.getValueByInteger());
-      }else if(condition.getName().equals("id")){
-        return member.id.lt(condition.getValueByLong());
-      }
-    }
-    return null;
-  }
 
 
   private BooleanExpression idEq(Long id){
