@@ -2,6 +2,7 @@ package com.example.springquerydslbasic.member.controller;
 
 import com.example.springquerydslbasic.common.SearchParamToReqConverter;
 import com.example.springquerydslbasic.common.SearchReq;
+import com.example.springquerydslbasic.member.dto.MemberSearchRes;
 import com.example.springquerydslbasic.member.entity.Member;
 import com.example.springquerydslbasic.member.repo.MemberRepoSupport;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,5 +24,11 @@ public class MemberController {
                                      @PageableDefault Pageable pageable){
     SearchReq searchReq = SearchParamToReqConverter.convert(search, pageable);
     return memberRepoSupport.searchWithPage(searchReq);
+  }
+
+  @GetMapping("/v2/member/search")
+  public Page<MemberSearchRes> searchV2(@RequestParam String search, @PageableDefault Pageable pageable){
+    SearchReq searchReq = SearchParamToReqConverter.convert(search, pageable);
+    return memberRepoSupport.searchV2(searchReq);
   }
 }

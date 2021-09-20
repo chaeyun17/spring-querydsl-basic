@@ -5,8 +5,10 @@ import com.example.springquerydslbasic.common.Querydsl4RepositorySupport;
 import com.example.springquerydslbasic.common.SearchCondition;
 import com.example.springquerydslbasic.common.SearchReq;
 import com.example.springquerydslbasic.member.dto.MemberSearchCondition;
+import com.example.springquerydslbasic.member.dto.MemberSearchRes;
 import com.example.springquerydslbasic.member.entity.Member;
 import com.example.springquerydslbasic.team.entity.QTeam;
+import com.querydsl.core.types.Projections;
 import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.data.domain.Page;
@@ -75,8 +77,6 @@ public class MemberRepoSupport extends Querydsl4RepositorySupport {
       .toArray(BooleanExpression[]::new);
   }
 
-
-
   private BooleanExpression idEq(Long id){
     return id == null ? null : member.id.eq(id);
   }
@@ -90,5 +90,19 @@ public class MemberRepoSupport extends Querydsl4RepositorySupport {
   }
 
 
+  public Page<MemberSearchRes> searchV2(SearchReq searchReq) {
 
+    return applyPagination(searchReq.getPageable(), (contentQuery)->
+      contentQuery
+      .from(member)
+      .select(Projections.constructor(MemberSearchRes.class,
+        member.id,
+        member.name,
+        member.age,
+        member.createdAt,
+        member.team.id,
+        member.team.name
+    )));
+
+  }
 }

@@ -2,8 +2,10 @@ package com.example.springquerydslbasic.member.entity;
 
 import com.example.springquerydslbasic.team.entity.Team;
 import lombok.*;
+import org.hibernate.annotations.CreationTimestamp;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter @Setter @AllArgsConstructor @NoArgsConstructor @ToString
@@ -24,5 +26,8 @@ public class Member {
   @ManyToOne
   @JoinColumn(name = "team_id")
   private Team team;
+
+  @Column(name = "created_at")
+  private LocalDateTime createdAt;
 
 }
