@@ -1,5 +1,6 @@
 package com.example.springquerydslbasic.common;
 
+import com.example.springquerydslbasic.member.entity.Member;
 import com.querydsl.core.types.EntityPath;
 import com.querydsl.core.types.Expression;
 import com.querydsl.core.types.dsl.PathBuilder;
@@ -91,4 +92,5 @@ public abstract class Querydsl4RepositorySupport {
     return PageableExecutionUtils.getPage(content, pageable,
       countResult::fetchCount);
   }
+
 }

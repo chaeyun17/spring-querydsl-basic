@@ -1,10 +1,13 @@
 package com.example.springquerydslbasic.member.repo;
 
+import com.example.springquerydslbasic.common.QueryDslUtils;
 import com.example.springquerydslbasic.common.Querydsl4RepositorySupport;
+import com.example.springquerydslbasic.common.SearchCondition;
+import com.example.springquerydslbasic.common.SearchReq;
 import com.example.springquerydslbasic.member.dto.MemberSearchCondition;
 import com.example.springquerydslbasic.member.entity.Member;
 import com.example.springquerydslbasic.team.entity.QTeam;
-import com.querydsl.core.types.dsl.BooleanExpression;
+import com.querydsl.core.types.dsl.*;
 import com.querydsl.jpa.impl.JPAQuery;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -45,6 +48,51 @@ public class MemberRepoSupport extends Querydsl4RepositorySupport {
     return PageableExecutionUtils.getPage(content, pageable, query::fetchCount);
   }
 
+  public Page<Member> searchWithPage(SearchReq searchReq) {
+    JPAQuery<Member> query = selectFrom(member);
+    query.where(getBooleanExpressions(searchReq.getConditions()));
+    Pageable pageable = searchReq.getPageable();
+    List<Member> content = getQuerydsl().applyPagination(pageable, query).fetch();
+    return PageableExecutionUtils.getPage(content, pageable, query::fetchCount);
+  }
+
+  private BooleanExpression[] getBooleanExpressions(List<SearchCondition> conditions){
+    return conditions.stream()
+      .map(c-> QueryDslUtils.getBooleanExpression(member,
+        c.getName(), c.getOperation(), c.getValue()))
+      .toArray(BooleanExpression[]::new);
+  }
+
+  private BooleanExpression getBooleanExpression(SearchCondition condition) {
+    if(condition.isOpContains()) {
+    }else if(condition.isOpEq()){
+      if(condition.getName().equals("name")){
+        String value = condition.getValueByString();
+        return member.name.eq(value);
+      }else if (condition.getName().equals("age")){
+        int value = condition.getValueByInteger();
+        return member.age.eq(value);
+      }else if(condition.getName().equals("id")){
+        long value = condition.getValueByLong();
+        return member.id.eq(value);
+      }
+    }else if(condition.isOpGreaterThan()){
+      if(condition.getName().equals("age")){
+        return member.age.gt(condition.getValueByInteger());
+      }else if(condition.getName().equals("id")){
+        return member.id.gt(condition.getValueByLong());
+      }
+    }else if(condition.isOpLowerThan()){
+      if(condition.getName().equals("age")){
+        return member.age.lt(condition.getValueByInteger());
+      }else if(condition.getName().equals("id")){
+        return member.id.lt(condition.getValueByLong());
+      }
+    }
+    return null;
+  }
+
+
   private BooleanExpression idEq(Long id){
     return id == null ? null : member.id.eq(id);
   }
@@ -56,6 +104,7 @@ public class MemberRepoSupport extends Querydsl4RepositorySupport {
   private BooleanExpression ageEq(Integer age){
     return age == null ? null : member.age.eq(age);
   }
+
 
 
 }
